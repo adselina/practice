@@ -1,19 +1,25 @@
-﻿import React, { Component } from 'react';
+﻿import { Component } from 'react';
+import * as React from 'react';
 import { FetchEnterprise } from './FetchEnterprise';
 import { FetchStaff } from './FetchStaff';
 
 import { ListOfComponents } from './ListOfComponents';
+import { SerchStaff } from './SerchStaff';
 
 
 
 export class Database extends Component {
 
     constructor(props) {
-        super(props);
-        this.state = { currentTable: "Предприятия" };
+        super(props); 
+        const query = new URLSearchParams(this.props.location.search);
+        const table = query.get('type') || "Предприятия";
+        this.state = { currentTable: table };
     }
 
+
     switchTable() {
+
         switch (this.state.currentTable) {
             case "Предприятия":
                 return <FetchEnterprise />
@@ -25,11 +31,13 @@ export class Database extends Component {
     }
    render() {
         return (
-                <div class="row">
-                <div class="col-md-2.5 col-md-push-8">
+                <div className="row">
+                <div style={{marginLeft:'18px'} } className="col-md-2.7 pull-md-3">
                     <ListOfComponents setTable={(name) => { this.setState({ currentTable: name }) }} />
+      
                     </div>
-                <div class="col-md-9 col-md-pull-3">
+                <div style={{ marginLeft: '25px' }} className="col-md-10 pull-md-3">
+                    
                     {this.switchTable()}
                     </div>
                 </div>           

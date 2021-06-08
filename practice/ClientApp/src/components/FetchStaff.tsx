@@ -1,42 +1,62 @@
 ﻿import * as React from 'react';
+import { Component } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Link, NavLink } from 'react-router-dom';
-import { Database } from './Database';
+import { SerchStaff } from './SerchStaff';
 
 interface FetchStaffDataState {
+   
     stafflist: StaffData[];
+    searchList: StaffData[];
     loading: boolean;
 }
 
 export class FetchStaff extends React.Component<RouteComponentProps<{}>, FetchStaffDataState> {
-    constructor(props) {
+    constructor(props: any) {
         super(props);
-        this.state = { stafflist: [], loading: true };
+        this.state = { searchList: [], stafflist: [], loading: true, };
 
-        fetch('api/staff')
-            .then(response => response.json() as Promise<StaffData[]>)
-            .then(data => {
-                this.setState({ stafflist: data, loading: false });
-            });
+        if (this.state.stafflist.length == 0) {
+            fetch('api/staff')
+                .then(response => response.json() as Promise<StaffData[]>)
+                .then(data => {
+                    this.setState({ searchList:data, stafflist: data, loading: false });
+                });
+        }
 
         // This binding is necessary to make "this" work in the callback  
         this.handleDelete = this.handleDelete.bind(this);
-        /*this.handleEdit = this.handleEdit.bind(this);*/
-
+        this.handleEdit = this.handleEdit.bind(this);
     }
 
     public render() {
+       
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
-            : this.renderStaffTable(this.state.stafflist);
+            : this.renderStaffTable(this.state.searchList);
 
-        return <div>
+        return (<div>
             <h1>Сотрудники</h1>
-            <p>
-                <Link to="/addenterprise">Добавить...</Link>
-            </p>
+            <div>
+                <Link to="/addstaff">Добавить...</Link>
+                {<SerchStaff Search={(type: string, value: string) => this.ChangeSerch(type, value)} Remove={()=>this.RemoveSearch()} />}
+            </div>
+            
             {contents}
-        </div>;
+        </div>);
+    }
+
+    ChangeSerch(type: string, value: string) {
+        console.log(type, value);
+        this.setState({ loading: true })
+        fetch(`api/staff/${type}-${value}`)
+            .then(response => response.json() as Promise<StaffData[]>)
+            .then(data => {
+                this.setState({ searchList: data, loading: false });
+            });
+    }
+    RemoveSearch() {
+        this.setState({ searchList: this.state.stafflist});
     }
 
     // Handle Delete request for an employee
@@ -59,37 +79,39 @@ export class FetchStaff extends React.Component<RouteComponentProps<{}>, FetchSt
         }
     }
 
-    //private handleEdit(id: number) {
-    //    this.props.history.push("/staff/edit/" + id);
-    //}
+    private handleEdit(id: number) {
+        this.props.history.push("/staff/edit/"+id);
+    }
 
     // Returns the HTML table to the render() method.  
     renderStaffTable(stf: StaffData[]) {
         return <table className='table'>
             <thead>
-                <tr>
+                <tr style={{textAlign: 'center' }}>
                     <th></th>
                     <th>ФИО</th>
                     <th>Место работы</th>
-                    <th>Должность</th>
-                    <th>Дата рождения</th>
-                    <th>Дата найма</th>
+                    <th style={{ width: '17%' }}>Должность</th>
+                    <th style={{ width: '18%' }}>Дата рождения</th>
+                    <th style={{ width: '18%' }}>Дата найма</th>
                     <th>Телефон</th>
                 </tr>
             </thead>
             <tbody>
                 {stf.map(e =>
-                    <tr key={e.id}>
+                    <tr style={{ textAlign: 'center' }} key={e.id}>
                         <td></td>
                         <td>{e.name}</td>
                         <td>{e.company}</td>
                         <td>{e.post}</td>
-                        <td>{e.dateOfBirth}</td>
-                        <td>{e.dateOfHire}</td>
+                        <td>{e.dateOfBirth.toString().split('T')[0]}</td>
+                        <td>{e.dateOfHire.toString().split('T')[0]}</td>
                         <td>{e.contact}</td>
                         <td>
-                            {/*<a className="action" onClick={(id) => this.handleEdit(e.id)}>Изменить</a>  |*/}
-                            <a className="action" onClick={(id) => this.handleDelete(e.id)}>Удалить</a>
+                            <Link to={"/staff/edit/" + e.id}>Изменить</Link>
+                            <a className="action" onClick={(id) => this.handleDelete(e.id)}>
+                                <Link to={""}> Удалить</Link>
+                            </a>
                         </td>
                     </tr>
                 )}
@@ -103,7 +125,7 @@ export class StaffData {
     name: string = "";
     company: string = "";
     post: string = "";
-    dateOfBirth: string = "";
-    dateOfHire: string = "";
+    dateOfBirth: Date = new Date(Date.now());
+    dateOfHire: Date = new Date(Date.now());
     contact: string = "";
 }

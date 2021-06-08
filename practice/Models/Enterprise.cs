@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using NpgsqlTypes;
 
 #nullable disable
@@ -25,7 +26,8 @@ namespace practice.Models
         public virtual Planfile IdPlanfilesNavigation { get; set; }
         public virtual ICollection<Manufacture> Manufactures { get; set; }
     }
-    public class Enterprise_info
+  
+    public class EnterpriseTable
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -35,12 +37,10 @@ namespace practice.Models
         public string Inn { get; set; }
         public string Ogrn { get; set; }
 
-    }
-
-    public class EnterpriseTable
-    {
         postgresContext db = new postgresContext();
-        public int DeleteEmployee(int id)
+
+
+        public int DeleteEnterprise(int id)
         {
             try
             {
@@ -54,7 +54,85 @@ namespace practice.Models
                 throw;
             }
         }
-        public IEnumerable<Enterprise_info> GetEnterpriseInfo()
+        public int AddEnterprise(EnterpriseTable stf)
+        {
+            try
+            {
+                Contact conctact = new Contact();
+                EnterpriseCard card = new EnterpriseCard();
+                Bankdetail bank = new Bankdetail();
+                StaffTable staff = new StaffTable();
+
+                Enterprise newEnterprise = new Enterprise
+                {
+                    Id = default,
+                    IdCard = card.AddEnterpriseCard(stf),
+                    HeadEnterprise = staff.FindStaff(stf.Head),
+                };
+                db.Enterprises.Add(newEnterprise);
+                db.SaveChanges();
+                return 1;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        public int UpdateEnterprise(EnterpriseTable stf)
+        {
+            try
+            {
+                EnterpriseCard card = new EnterpriseCard();
+                StaffTable st = new StaffTable();
+                card.UpdateCard(stf);
+                Enterprise update = new Enterprise
+                {
+                    Id = stf.Id,
+                    HeadEnterprise = st.FindStaff(stf.Head),  
+                    IdCard = card.FindCard(stf.Name)
+                };
+                db.Entry(update).State = EntityState.Modified;
+                db.SaveChanges();
+                return 1;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        public EnterpriseTable GetEnterpriseData(int id)
+        {
+            try
+            {
+
+                Contact cn = new Contact();
+                Staff head = db.staff.Find(id);
+                var details = db.Enterprises.Where(x => x.Id == id).Join(db.EnterpriseCards,
+                    ent => ent.IdCard,
+                    card => card.Id,
+                    (ent, card) => new { bankid = card.IdBankdetails, name = card.EnterpriseNameS, idCont = card.IdContact, orgn = card.Ogrn }).First();
+
+                EnterpriseTable info = new EnterpriseTable
+                {
+                    Id = id,
+                    Head = head.Fullname,
+
+                    Name = details.name,
+                    Ogrn = details.orgn,
+                    Contact = db.Contacts.Where(x => x.Id == details.idCont).Select(x => x.Phone).First(),
+                    Email = db.Contacts.Where(x => x.Id == details.idCont).Select(x => x.Email).First(),
+                    Inn = db.Bankdetails.Where(x => x.Id == details.bankid).Select(x => x.Inn).First()
+
+                };
+                return info;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public IEnumerable<EnterpriseTable> GetEnterpriseInfo()
         {
             try
             {
@@ -91,7 +169,7 @@ namespace practice.Models
                     }).Join(db.Contacts, 
                     main_data => main_data.contact_id,
                     contact => contact.Id,
-                    (main_data, contact) => new Enterprise_info{
+                    (main_data, contact) => new EnterpriseTable{
                         Id = main_data.id,
                         Name = main_data.name,
                         Head = main_data.head,

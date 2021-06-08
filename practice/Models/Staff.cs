@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -9,21 +10,19 @@ using NpgsqlTypes;
 namespace practice.Models
 {
 
-    public class Staff_info
+
+    public class StaffTable
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string DateOfBirth { get; set; }
-        public string DateOfHire { get; set; }
+        public DateTime? DateOfBirth { get; set; }
+        public DateTime? DateOfHire { get; set; }
         public string Post { get; set; }
         public string Contact { get; set; }
         public string Company { get; set; }
 
-    }
-    public class StaffTable
-    {
         postgresContext db = new postgresContext();
-        public IEnumerable<Staff_info> GetStaffInfo()
+        public IEnumerable<StaffTable> GetStaffInfo()
         {
             try
             {
@@ -37,6 +36,7 @@ namespace practice.Models
                         dateofbirth = stf.DateOfBirth,
                         name = stf.Fullname,
                         contact = stf.IdContact,
+                        idpost = stf.IdPost,
                         post = pst.Postname,
                         company = stf.IdTechObject
                     }).Join(db.Contacts,
@@ -49,23 +49,118 @@ namespace practice.Models
                         dateofbirth = stf.dateofbirth,
                         name = stf.name,
                         contact = cntct.Phone,
+                        idpost = stf.idpost,
                         post = stf.post,
                         company = stf.company
                     }).Join(db.TechObjects,
                     stf => stf.company,
                     com => com.Id,
-                    (stf, com) => new Staff_info {
+                    (stf, com) => new StaffTable
+                    {
                         Id = stf.id,
                         Name = stf.name,
-                        DateOfBirth = stf.dateofbirth.Value.Date.ToString("d"),
-                        DateOfHire = stf.hiredate.Value.Date.ToString("d"),
+                        DateOfBirth = stf.dateofbirth,
+                        DateOfHire = stf.hiredate,
                         Post = stf.post,
                         Contact = stf.contact,
                         Company = com.TechObjectName
                     });
-                
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        public IEnumerable<StaffTable> GetStaffInfo(string fild, string value)
+        {
+            try
+            {
+                var info = db.staff.Join(db.Posts,
+                    stf => stf.IdPost,
+                    pst => pst.Id,
+                    (stf, pst) => new
+                    {
+                        id = stf.Id,
+                        hiredate = stf.HireDate,
+                        dateofbirth = stf.DateOfBirth,
+                        name = stf.Fullname,
+                        contact = stf.IdContact,
+                        idpost = stf.IdPost,
+                        post = pst.Postname,
+                        company = stf.IdTechObject
+                    }).Join(db.Contacts,
+                    stf => stf.contact,
+                    cntct => cntct.Id,
+                    (stf, cntct) => new
+                    {
+                        id = stf.id,
+                        hiredate = stf.hiredate,
+                        dateofbirth = stf.dateofbirth,
+                        name = stf.name,
+                        contact = cntct.Phone,
+                        idpost = stf.idpost,
+                        post = stf.post,
+                        company = stf.company
+                    }).Join(db.TechObjects,
+                    stf => stf.company,
+                    com => com.Id,
+                    (stf, com) => new StaffTable
+                    {
+                        Id = stf.id,
+                        Name = stf.name,
+                        DateOfBirth = stf.dateofbirth,
+                        DateOfHire = stf.hiredate,
+                        Post = stf.post,
+                        Contact = stf.contact,
+                        Company = com.TechObjectName
+                    });
+                switch (fild)
+                {
+                    case "Fullname":
+                        info = info.Where(x => x.Name == value);
+                        break;
+                    case "TechObjectName":
+                        info = info.Where(x => x.Company == value);
+                        break;
+                    case "Postname":
+                        info = info.Where(x => x.Post == value);
+                        break;
+                }
+                return info;
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
+        public StaffTable GetStaffData(int id)
+        {
+            try
+            {
+                Contact cn = new Contact();
+                Staff employee = db.staff.Find(id);
+                StaffTable info = new StaffTable
+                {
+                    Id = employee.Id,
+                    Name = employee.Fullname,
+                    DateOfBirth = employee.DateOfBirth,
+                    DateOfHire = employee.HireDate,
+                    Contact = db.staff.Where(x => x.Id == id).Join(db.Contacts,
+                    stf => stf.IdContact,
+                    cn => cn.Id,
+                    (stf, cn) => new { phone = cn.Phone }).Select(x => x.phone).First(),
+                    Post = db.staff.Where(x => x.Id == id).Join(db.Posts,
+                    stf => stf.IdPost,
+                    pst => pst.Id,
+                    (stf, pst) => new { post = pst.Postname }).Select(x => x.post).First(),
+                    Company = db.staff.Where(x => x.Id == id).Join(db.TechObjects,
+                    stf => stf.IdTechObject,
+                    tech => tech.Id,
+                    (stf, tech) => new { post = tech.TechObjectName }).Select(x => x.post).First()
 
+                };
+                return info;
             }
             catch
             {
@@ -86,6 +181,62 @@ namespace practice.Models
             {
                 throw;
             }
+        }
+        public int UpdateStaff(StaffTable stf)
+        {
+            try
+            {
+                Contact conctact = new Contact();
+                Post post = new Post();
+                TechObject techObject = new TechObject();
+                Staff newStaff = new Staff
+                {
+                    Id = stf.Id,
+                    Fullname = stf.Name,
+                    DateOfBirth = Convert.ToDateTime(stf.DateOfBirth),
+                    HireDate = Convert.ToDateTime(stf.DateOfHire),
+                    IdPost = post.Find(stf.Post),
+                    IdTechObject = techObject.Find(stf.Company),
+                    IdContact = conctact.AddContact(stf.Contact)
+                };
+                db.Entry(newStaff).State = EntityState.Modified;
+                db.SaveChanges();
+                return 1;
+            }
+            catch
+            {
+                throw;
+            }
+        } 
+        public int AddStaff(StaffTable stf)
+        {
+            try
+            {
+                Contact conctact = new Contact();
+                Post post = new Post();
+                TechObject techObject = new TechObject();
+                Staff newStaff = new Staff
+                {
+                    Id = default,
+                    Fullname = stf.Name,
+                    DateOfBirth = Convert.ToDateTime(stf.DateOfBirth),
+                    HireDate = Convert.ToDateTime(stf.DateOfHire),
+                    IdPost = post.Find(stf.Post),
+                    IdTechObject = techObject.Find(stf.Company),
+                    IdContact = conctact.AddContact(stf.Contact)
+                };
+                db.staff.Add(newStaff);
+                db.SaveChanges();
+                return 1;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        public int FindStaff(string staffname)
+        {
+            return db.staff.Where(x => x.Fullname == staffname).Select(x => x.Id).First();
         }
     }
     

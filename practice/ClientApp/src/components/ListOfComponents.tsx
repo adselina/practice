@@ -9,7 +9,7 @@ interface FetchList {
 }
 
 export class ListOfComponents extends React.Component<RouteComponentProps<{}>, FetchList> {
-    constructor(props) {
+    constructor(props : any) {
         super(props);
         this.state = { number_of_components: [], loading: true };
 
@@ -30,15 +30,13 @@ export class ListOfComponents extends React.Component<RouteComponentProps<{}>, F
            {contents}
         </div>);
             }
-
-            // Returns the HTML table to the render() method.  
     
-    renderListOfComponents(comp) {
+    renderListOfComponents(comp : any) {
         return (
             <ListGroup>
                 {Object.entries(comp).map(([key, value]) =>
                     <ListGroupItem onClick={()=>this.props.setTable(key)} className="justify-content-between" tag={Link} > {key}
-                        <Badge pill> {value} </Badge>
+                        {/*<Badge pill> {value} </Badge>*/}
                      
                     </ListGroupItem>)}
             </ListGroup>

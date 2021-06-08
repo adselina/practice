@@ -8,7 +8,7 @@ interface FetchEnterpriseDataState {
 }
 
 export class FetchEnterprise extends React.Component<RouteComponentProps<{}>, FetchEnterpriseDataState> {
-    constructor(props) {
+    constructor(props: any) {
         super(props);
         this.state = { entList: [], loading: true };
 
@@ -54,15 +54,11 @@ export class FetchEnterprise extends React.Component<RouteComponentProps<{}>, Fe
         }
     }
 
-    private handleEdit(id: number) {
-        this.props.history.push("/enterprise/edit/" + id);
-    }
-
     // Returns the HTML table to the render() method.  
-    renderEnterpriseTable(ent) {
+    renderEnterpriseTable(ent: any) {
         return <table className='table'>
             <thead>
-                <tr>
+                <tr style={{ textAlign: 'center' }}>
                     <th></th>
                     <th>Компания</th>
                     <th>Руководитель</th>
@@ -74,7 +70,7 @@ export class FetchEnterprise extends React.Component<RouteComponentProps<{}>, Fe
             </thead>
             <tbody>
                 {ent.map(e =>                  
-                    <tr key={e.id}>
+                    <tr style={{ textAlign: 'center' }} key={e.id}>
                         <td></td>
                         <td>{e.name}</td>
                         <td>{e.head}</td>
@@ -83,8 +79,10 @@ export class FetchEnterprise extends React.Component<RouteComponentProps<{}>, Fe
                         <td>{e.inn}</td>
                         <td>{e.ogrn}</td>
                         <td>
-                            <a className="action" onClick={(id) => this.handleEdit(e.id)}>Изменить</a>  |
-                            <a className="action" onClick={(id) => this.handleDelete(e.id)}>Удалить</a>
+                            <Link to={"/enterprise/edit/" + e.id}>Изменить</Link> 
+                            <div className="action" onClick={(id) => this.handleDelete(e.id)}>
+                                <Link to={""}> Удалить</Link>
+                            </div>
                         </td>
                     </tr>
                 )}

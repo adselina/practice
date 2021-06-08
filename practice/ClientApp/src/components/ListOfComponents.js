@@ -38,18 +38,13 @@ var ListOfComponents = /** @class */ (function (_super) {
             : this.renderListOfComponents(this.state.number_of_components);
         return (React.createElement("div", null, contents));
     };
-    // Returns the HTML table to the render() method.  
     ListOfComponents.prototype.renderListOfComponents = function (comp) {
         var _this = this;
         return (React.createElement(reactstrap_1.ListGroup, null, Object.entries(comp).map(function (_a) {
             var key = _a[0], value = _a[1];
             return React.createElement(reactstrap_1.ListGroupItem, { onClick: function () { return _this.props.setTable(key); }, className: "justify-content-between", tag: react_router_dom_1.Link },
                 " ",
-                key,
-                React.createElement(reactstrap_1.Badge, { pill: true },
-                    " ",
-                    value,
-                    " "));
+                key);
         })));
     };
     return ListOfComponents;

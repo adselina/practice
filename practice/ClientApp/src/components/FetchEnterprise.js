@@ -60,15 +60,12 @@ var FetchEnterprise = /** @class */ (function (_super) {
             });
         }
     };
-    FetchEnterprise.prototype.handleEdit = function (id) {
-        this.props.history.push("/enterprise/edit/" + id);
-    };
     // Returns the HTML table to the render() method.  
     FetchEnterprise.prototype.renderEnterpriseTable = function (ent) {
         var _this = this;
         return React.createElement("table", { className: 'table' },
             React.createElement("thead", null,
-                React.createElement("tr", null,
+                React.createElement("tr", { style: { textAlign: 'center' } },
                     React.createElement("th", null),
                     React.createElement("th", null, "\u041A\u043E\u043C\u043F\u0430\u043D\u0438\u044F"),
                     React.createElement("th", null, "\u0420\u0443\u043A\u043E\u0432\u043E\u0434\u0438\u0442\u0435\u043B\u044C"),
@@ -77,7 +74,7 @@ var FetchEnterprise = /** @class */ (function (_super) {
                     React.createElement("th", null, "\u0418\u041D\u041D"),
                     React.createElement("th", null, "\u041E\u0413\u0420\u041D"))),
             React.createElement("tbody", null, ent.map(function (e) {
-                return React.createElement("tr", { key: e.id },
+                return React.createElement("tr", { style: { textAlign: 'center' }, key: e.id },
                     React.createElement("td", null),
                     React.createElement("td", null, e.name),
                     React.createElement("td", null, e.head),
@@ -86,9 +83,9 @@ var FetchEnterprise = /** @class */ (function (_super) {
                     React.createElement("td", null, e.inn),
                     React.createElement("td", null, e.ogrn),
                     React.createElement("td", null,
-                        React.createElement("a", { className: "action", onClick: function (id) { return _this.handleEdit(e.id); } }, "\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C"),
-                        "  |",
-                        React.createElement("a", { className: "action", onClick: function (id) { return _this.handleDelete(e.id); } }, "\u0423\u0434\u0430\u043B\u0438\u0442\u044C")));
+                        React.createElement(react_router_dom_1.Link, { to: "/enterprise/edit/" + e.id }, "\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C"),
+                        React.createElement("div", { className: "action", onClick: function (id) { return _this.handleDelete(e.id); } },
+                            React.createElement(react_router_dom_1.Link, { to: "" }, " \u0423\u0434\u0430\u043B\u0438\u0442\u044C"))));
             })));
     };
     return FetchEnterprise;
