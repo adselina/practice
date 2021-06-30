@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="practice.Controllers.EnterpriseController">
+    <Position X="1" Y="1" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAABAABAAAAAAAAAABEAAEACAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\EnterpriseController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="practice.Controllers.StaffController">
+    <Position X="3" Y="1" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABAABAAAAAIAAAABEAAEACAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\StaffController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="practice.Controllers.AdditionalControllers">
+    <Position X="7.25" Y="1" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQIAAAAAAAAAAAAAAAAAAAAAAEAAAAAAIAI=</HashCode>
+      <FileName>Controllers\AdditionalControllers.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="practice.Controllers.ManufactureController">
+    <Position X="5" Y="1" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAABAABAAAAAAAAAABEAAEACAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\ManufactureController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

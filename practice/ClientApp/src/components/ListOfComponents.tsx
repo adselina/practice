@@ -1,7 +1,7 @@
 ﻿import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Link, NavLink } from 'react-router-dom';
-import { ListGroup, ListGroupItem, Badge } from 'reactstrap';
+import { Link} from 'react-router-dom';
+import { ListGroup, ListGroupItem} from 'reactstrap';
 
 interface FetchList {
     number_of_components: Int8Array[];
@@ -36,7 +36,6 @@ export class ListOfComponents extends React.Component<RouteComponentProps<{}>, F
             <ListGroup>
                 {Object.entries(comp).map(([key, value]) =>
                     <ListGroupItem onClick={()=>this.props.setTable(key)} className="justify-content-between" tag={Link} > {key}
-                        {/*<Badge pill> {value} </Badge>*/}
                      
                     </ListGroupItem>)}
             </ListGroup>

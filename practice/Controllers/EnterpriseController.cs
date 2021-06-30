@@ -14,7 +14,7 @@ namespace practice.Controllers
 
         [HttpGet]
         [Route("api/enterprise")]
-        public IEnumerable<EnterpriseTable> Enterprise()
+        public IEnumerable<EnterpriseTable> Get()
         {
             return objEnterprise.GetEnterpriseInfo();
         }
@@ -49,9 +49,12 @@ namespace practice.Controllers
             return objEnterprise.AddEnterprise(stf);
         }
 
-
-
-
-
+        [HttpGet]
+        [Route("api/enterprise/{fild}-{value}")]
+        public IEnumerable<EnterpriseTable> Filter(string fild, string value)
+        {
+            return objEnterprise.GetEnterpriseInfo(fild, value);
+       
+        }
     }
 }

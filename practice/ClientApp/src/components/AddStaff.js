@@ -71,7 +71,7 @@ var AddStaff = /** @class */ (function (_super) {
                 body: data,
             }).then(function (response) { return response.json(); })
                 .then(function (responseJson) {
-                _this.props.history.push("/database?type=Персонал");
+                _this.props.history.push("/database?type=Сотрудники");
             });
         }
         // POST request for Add employee.  
@@ -81,14 +81,14 @@ var AddStaff = /** @class */ (function (_super) {
                 body: data,
             }).then(function (response) { return response.json(); })
                 .then(function (responseJson) {
-                _this.props.history.push("/database?type=Персонал");
+                _this.props.history.push("/database?type=Сотрудники");
             });
         }
     };
     // This will handle Cancel button click event.  
     AddStaff.prototype.handleCancel = function (e) {
         e.preventDefault();
-        this.props.history.push("/database?type=Персонал");
+        this.props.history.push("/database?type=Сотрудники");
     };
     AddStaff.prototype.onlyNumbers = function (e) {
         var re = /[0-9]+/;

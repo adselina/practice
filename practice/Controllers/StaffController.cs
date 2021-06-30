@@ -12,21 +12,21 @@ namespace practice.Controllers
         StaffTable staff = new StaffTable();
         [HttpGet]
         [Route("api/staff")]
-        public IEnumerable<StaffTable> Staff()
+        public IEnumerable<StaffTable> Get()
         {
             return staff.GetStaffInfo();
         }
 
         [HttpGet]
         [Route("api/staff/{fild}-{value}")]
-        public IEnumerable<StaffTable> FilterStaff(string fild, string value)
+        public IEnumerable<StaffTable> Filter(string fild, string value)
         {
             return staff.GetStaffInfo(fild, value);
         }
 
         [HttpDelete]
         [Route("api/staff/{id}")]
-        public int DeleteStaff(int id)
+        public int Delete(int id)
         {
             return staff.DeleteStaff(id);
         }
@@ -52,5 +52,6 @@ namespace practice.Controllers
 
             return staff.AddStaff(stf);
         }
+
     }
 }

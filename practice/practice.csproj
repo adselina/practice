@@ -31,13 +31,23 @@
 
   <ItemGroup>
     <None Remove="ClientApp\src\components\AddEnterprise.tsx" />
+    <None Remove="ClientApp\src\components\AddManufacture.tsx" />
     <None Remove="ClientApp\src\components\AddStaff.tsx" />
     <None Remove="ClientApp\src\components\FetchEnterprise.tsx" />
+    <None Remove="ClientApp\src\components\FetchManufacture.tsx" />
     <None Remove="ClientApp\src\components\FetchStaff.tsx" />
     <None Remove="ClientApp\src\components\Home.tsx" />
     <None Remove="ClientApp\src\components\ListOfComponents.tsx" />
     <None Remove="ClientApp\src\components\NavMenu.tsx" />
+    <None Remove="ClientApp\src\components\SerchEnterprise.tsx" />
+    <None Remove="ClientApp\src\components\SerchManufacture.tsx" />
     <None Remove="ClientApp\src\components\SerchStaff.tsx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ClientApp\src\for_user.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

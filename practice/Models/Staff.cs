@@ -236,7 +236,8 @@ namespace practice.Models
         }
         public int FindStaff(string staffname)
         {
-            return db.staff.Where(x => x.Fullname == staffname).Select(x => x.Id).First();
+            int id = db.staff.Where(x => x.Fullname == staffname).Select(x => x.Id).FirstOrDefault();
+            return id;
         }
     }
     

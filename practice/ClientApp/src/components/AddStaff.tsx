@@ -32,7 +32,7 @@ export class AddStaff extends React.Component<RouteComponentProps<{}>, AddStaffD
                 this.setState({ companyList: data });
             });
 
-        var empid = this.props.match.params["empid"];
+        let empid = this.props.match.params["empid"];
 
         if (this.state.title == "addstaff") {
             this.state = { title: "create", loading: false, postsList: [], companyList: [], empData: new StaffData };
@@ -41,7 +41,7 @@ export class AddStaff extends React.Component<RouteComponentProps<{}>, AddStaffD
             .then(response => response.json() as Promise<StaffData>)
             .then(data => {
                 this.setState({ title: "edit", loading: false, empData: data })
-            }))        
+            }))
 
         this.handleSave = this.handleSave.bind(this);
         this.handleCancel = this.handleCancel.bind(this);
@@ -73,7 +73,7 @@ export class AddStaff extends React.Component<RouteComponentProps<{}>, AddStaffD
 
             }).then((response) => response.json())
                 .then((responseJson) => {
-                    this.props.history.push("/database?type=Персонал" );
+                    this.props.history.push("/database?type=Сотрудники" );
                 })
         }
 
@@ -85,7 +85,7 @@ export class AddStaff extends React.Component<RouteComponentProps<{}>, AddStaffD
 
             }).then((response) => response.json())
                 .then((responseJson) => {
-                    this.props.history.push("/database?type=Персонал");
+                    this.props.history.push("/database?type=Сотрудники");
                 })
         }
     }
@@ -93,14 +93,16 @@ export class AddStaff extends React.Component<RouteComponentProps<{}>, AddStaffD
     // This will handle Cancel button click event.  
     private handleCancel(e: any) {
         e.preventDefault();
-        this.props.history.push("/database?type=Персонал");
+        this.props.history.push("/database?type=Сотрудники");
     }
-    private onlyNumbers(e) {
+
+    private onlyNumbers(e:any) {
         const re = /[0-9]+/;
         if (!re.test(e.key)) {
             e.preventDefault();
         }
     };
+
     // Returns the HTML Form to the render() method.  
     private renderCreateForm(postsList: Array<any>, companyList: Array<any>) {
         return (

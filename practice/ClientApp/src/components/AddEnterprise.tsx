@@ -27,7 +27,7 @@ export class AddEnterprise extends React.Component<RouteComponentProps<{}>, AddE
                 this.setState({ staffList: data });
             });
 
-        var empid = this.props.match.params["empid"];
+        let empid = this.props.match.params["empid"];
 
         if (this.state.title == "addenterprise") {
             this.state = { title: "create", loading: false, staffList: [], entData: new EnterpriseData };
@@ -89,7 +89,7 @@ export class AddEnterprise extends React.Component<RouteComponentProps<{}>, AddE
         e.preventDefault();
         this.props.history.push("/database?type=Предприятия");
     }
-    private onlyNumbers(e) {
+    private onlyNumbers(e: any) {
         const re = /[0-9]+/;
             if (!re.test(e.key)) {
                 e.preventDefault();

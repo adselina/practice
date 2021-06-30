@@ -72,7 +72,7 @@ var FetchStaff = /** @class */ (function (_super) {
                 method: 'delete'
             }).then(function (data) {
                 _this.setState({
-                    stafflist: _this.state.stafflist.filter(function (rec) {
+                    searchList: _this.state.stafflist.filter(function (rec) {
                         return (rec.id != id);
                     })
                 });
@@ -107,7 +107,7 @@ var FetchStaff = /** @class */ (function (_super) {
                     React.createElement("td", null,
                         React.createElement(react_router_dom_1.Link, { to: "/staff/edit/" + e.id }, "\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C"),
                         React.createElement("a", { className: "action", onClick: function (id) { return _this.handleDelete(e.id); } },
-                            React.createElement(react_router_dom_1.Link, { to: "" }, " \u0423\u0434\u0430\u043B\u0438\u0442\u044C"))));
+                            React.createElement(react_router_dom_1.Link, { to: "/database?type=Сотрудники" }, " \u0423\u0434\u0430\u043B\u0438\u0442\u044C"))));
             })));
     };
     return FetchStaff;

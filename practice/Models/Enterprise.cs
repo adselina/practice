@@ -25,6 +25,19 @@ namespace practice.Models
         public virtual EnterpriseCard IdCardNavigation { get; set; }
         public virtual Planfile IdPlanfilesNavigation { get; set; }
         public virtual ICollection<Manufacture> Manufactures { get; set; }
+
+        public IEnumerable<EnterpriseCard> GetInfo()
+        {
+            postgresContext db = new postgresContext();
+            try
+            {
+                return db.EnterpriseCards.ToList();
+            }
+            catch
+            {
+                throw;
+            }
+        }
     }
   
     public class EnterpriseTable
@@ -45,6 +58,8 @@ namespace practice.Models
             try
             {
                 Enterprise emp = db.Enterprises.Find(id);
+                EnterpriseCard card = db.EnterpriseCards.Find(db.Enterprises.Where(x=>x.Id == id).Select(x=>x.IdCard).First());
+                db.EnterpriseCards.Remove(card);
                 db.Enterprises.Remove(emp);
                 db.SaveChanges();
                 return 1;
@@ -104,7 +119,6 @@ namespace practice.Models
         {
             try
             {
-
                 Contact cn = new Contact();
                 Staff head = db.staff.Find(id);
                 var details = db.Enterprises.Where(x => x.Id == id).Join(db.EnterpriseCards,
@@ -131,7 +145,13 @@ namespace practice.Models
                 throw;
             }
         }
-
+        public int FindEnterprise(string name)
+        {
+            int idcard = db.EnterpriseCards.Where(x => x.EnterpriseNameS == name).Select(x => x.Id).First();
+            int id = db.Enterprises.Where(x => x.IdCard == idcard).Select(x => x.Id).First();
+          
+            return id;
+        }
         public IEnumerable<EnterpriseTable> GetEnterpriseInfo()
         {
             try
@@ -185,6 +205,75 @@ namespace practice.Models
                 throw;
             }
         }
+
+        public IEnumerable<EnterpriseTable> GetEnterpriseInfo(string fild, string value)
+        {
+            try
+            {
+                var info = db.Enterprises.Join(db.EnterpriseCards,
+                    ent => ent.IdCard,
+                    card_id => card_id.Id,
+                    (ent, card) => new {
+                        id = ent.Id,
+                        name = card.EnterpriseNameS,
+                        head_id = ent.HeadEnterprise,
+                        contact_id = card.IdContact,
+                        ogrn = card.Ogrn,
+                        bank_id = card.IdBankdetails
+                    }).Join(db.staff,
+                    ent_card => ent_card.head_id,
+                    staff => staff.Id,
+                    (ent_card, staff) => new {
+                        id = ent_card.id,
+                        name = ent_card.name,
+                        head = staff.Fullname,
+                        contact_id = ent_card.contact_id,
+                        ogrn = ent_card.ogrn,
+                        bank_id = ent_card.bank_id
+                    }).Join(db.Bankdetails,
+                    main_data => main_data.bank_id,
+                    bank => bank.Id,
+                    (main_data, bank) => new {
+                        id = main_data.id,
+                        name = main_data.name,
+                        inn = bank.Inn,
+                        contact_id = main_data.contact_id,
+                        head = main_data.head,
+                        ogrn = main_data.ogrn
+                    }).Join(db.Contacts,
+                    main_data => main_data.contact_id,
+                    contact => contact.Id,
+                    (main_data, contact) => new EnterpriseTable
+                    {
+                        Id = main_data.id,
+                        Name = main_data.name,
+                        Head = main_data.head,
+                        Contact = contact.Phone,
+                        Email = contact.Email,
+                        Inn = main_data.inn,
+                        Ogrn = main_data.ogrn
+                    });
+                
+                switch (fild)
+                {
+                    case "Companyname":
+                        info = info.Where(x => x.Name == value);
+                        break;
+                    case "Head":
+                        info = info.Where(x => x.Head == value);
+                        break;
+                    case "Contact":
+                        info = info.Where(x => x.Contact == value);
+                        break;
+                }
+                return info;
+
+            }
+            catch
+            {
+                throw;
+            }
+        }
     }
     public class ComponentList
     {
@@ -193,8 +282,8 @@ namespace practice.Models
         {
             Dictionary<string, int> names_numbers = new Dictionary<string, int>();
             string[] input = { "Предприятия",
-                           "Персонал",
-                           "Фабрики" };
+                           "Сотрудники",
+                           "Производства" };
             names_numbers.Add(input[0], db.Enterprises.Count());
             names_numbers.Add(input[1], db.staff.Count());
             names_numbers.Add(input[2], db.Buildings.Count());

@@ -1,25 +1,25 @@
 ﻿import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Link, NavLink } from 'react-router-dom';
-import { SerchEnterprise } from './SerchEnterprise';
+import { SerchManufacture } from './SerchManufacture';
 
-interface FetchEnterpriseDataState {
-    entList: EnterpriseData[];
-    searchList: EnterpriseData[];
+interface FetchManufactureDataState {
+    mList: ManufactureData[];
+    searchList: ManufactureData[];
     loading: boolean;
 }
 
-export class FetchEnterprise extends React.Component<RouteComponentProps<{}>, FetchEnterpriseDataState> {
+export class FetchManufacture extends React.Component<RouteComponentProps<{}>, FetchManufactureDataState> {
     constructor(props: any) {
         super(props);
-        this.state = { searchList: [], entList: [], loading: true };
-        if (this.state.entList.length == 0) {
-            fetch('api/enterprise')
-                .then(response => response.json() as Promise<EnterpriseData[]>)
+        this.state = { searchList: [], mList: [], loading: true };
+        if (this.state.mList.length == 0) {
+            fetch('api/manufacture')
+                .then(response => response.json() as Promise<ManufactureData[]>)
                 .then(data => {
-                    this.setState({ searchList: data, entList: data, loading: false });
-
+                    this.setState({ searchList: data, mList: data, loading: false });
                 });
+            console.log("done");
         }
         this.handleDelete = this.handleDelete.bind(this);
         this.handleEdit = this.handleEdit.bind(this);
@@ -28,13 +28,13 @@ export class FetchEnterprise extends React.Component<RouteComponentProps<{}>, Fe
     public render() {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
-            : this.renderEnterpriseTable(this.state.searchList);
+            : this.renderManufactureTable(this.state.searchList);
 
         return (<div>
-            <h1>Предприятия</h1>
+            <h1>Производства</h1>
             <div>
-                <Link to="/addenterprise">Добавить...</Link>
-                {<SerchEnterprise Search={(type: string, value: string) => this.ChangeSerch(type, value)} Remove={() => this.RemoveSearch()} />}
+                <Link to="/addmanufacture">Добавить...</Link>
+                {<SerchManufacture Search={(type: string, value: string) => this.ChangeSerch(type, value)} Remove={() => this.RemoveSearch()} />}
             </div>
 
             {contents}
@@ -44,14 +44,14 @@ export class FetchEnterprise extends React.Component<RouteComponentProps<{}>, Fe
     ChangeSerch(type: string, value: string) {
         console.log(type, value);
         this.setState({ loading: true })
-        fetch(`api/enterprise/${type}-${value}`)
-            .then(response => response.json() as Promise<EnterpriseData[]>)
+        fetch(`api/manufacture/${type}-${value}`)
+            .then(response => response.json() as Promise<ManufactureData[]>)
             .then(data => {
                 this.setState({ searchList: data, loading: false });
             });
     }
     RemoveSearch() {
-        this.setState({ searchList: this.state.entList });
+        this.setState({ searchList: this.state.mList });
     }
 
     // Handle Delete request for an employee  
@@ -59,52 +59,53 @@ export class FetchEnterprise extends React.Component<RouteComponentProps<{}>, Fe
         if (!window.confirm("Вы действительно хотите удалить данные об предприятии?"))
             return;
         else {
-            fetch('api/enterprise/' + id, {
+            fetch('api/manufacture/' + id, {
                 method: 'delete'
             }).then(data => {
                 this.setState(
                     {
-                        searchList: this.state.entList.filter((rec) => {
+                        searchList: this.state.mList.filter((rec) => {
                             return (rec.id != id);
                         })
                     });
             });
-            
         }
     }
 
     private handleEdit(id: number) {
-        this.props.history.push("/enterprise/edit/" + id);
+        this.props.history.push("/manufacture/edit/" + id);
     }
 
     // Returns the HTML table to the render() method.  
-    renderEnterpriseTable(ent: EnterpriseData[]) {
+    renderManufactureTable(ent: ManufactureData[]) {
         return <table className='table'>
             <thead>
                 <tr style={{ textAlign: 'center' }}>
                     <th></th>
-                    <th>Компания</th>
-                    <th>Руководитель</th>
+                    <th>Производство</th>
+                    <th>Вид</th>
+                    <th>Предприятие</th>
                     <th>Телефон</th>
-                    <th>Почта</th>
-                    <th>ИНН</th>
-                    <th>ОГРН</th>
+                    <th>Руководитель</th>
+                    <th>Кол-во сооружений</th>
+                    <th>Кол-во тех.объектов</th>
                 </tr>
             </thead>
             <tbody>
-                {ent.map(e =>                  
+                {ent.map(e =>
                     <tr style={{ textAlign: 'center' }} key={e.id}>
                         <td></td>
                         <td>{e.name}</td>
-                        <td>{e.head}</td>
+                        <td>{e.type}</td>
+                        <td>{e.enterprise}</td>
                         <td>{e.contact}</td>
-                        <td>{e.email}</td>
-                        <td>{e.inn}</td>
-                        <td>{e.ogrn}</td>
+                        <td>{e.head}</td>
+                        <td>{e.c_building}</td>
+                        <td>{e.c_techobj}</td>
                         <td>
-                            <Link to={"/enterprise/edit/" + e.id}>Изменить</Link> 
+                            <Link to={"/manufacture/edit/" + e.id}>Изменить</Link>
                             <div className="action" onClick={(id) => this.handleDelete(e.id)}>
-                                <Link to={"/database?type=Предприятия"}> Удалить</Link>
+                                <Link to={"/database?type=Производство"}> Удалить</Link>
                             </div>
                         </td>
                     </tr>
@@ -114,12 +115,14 @@ export class FetchEnterprise extends React.Component<RouteComponentProps<{}>, Fe
     }
 }
 
-export class EnterpriseData {
+export class ManufactureData {
     id: number = 0;
     name: string = "";
-    head: string = "";
+    head: string = "-";
+    enterprise: string = "";
     contact: string = "";
     email: string = "";
-    inn: string = "";
-    ogrn: string = "";
+    type: string = "";
+    c_building: number = 0;
+    c_techobj: number = 0;
 }

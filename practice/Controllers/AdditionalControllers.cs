@@ -25,11 +25,27 @@ namespace practice.Controllers
             return allobj.GetInfo();
         }
 
-        ComponentList compList = new ComponentList();
+        [HttpGet]
+        [Route("api/allenterprise")]
+        public IEnumerable<EnterpriseCard> GetInfo()
+        {
+            Enterprise allnames = new Enterprise();
+            return allnames.GetInfo();
+        }
+
+        [HttpGet]
+        [Route("api/manufacturetype")]
+        public IEnumerable<ManufactureForm> GetManufactureType()
+        {
+            ManufactureForm allforms = new ManufactureForm();
+            return allforms.GetInfo();
+        }
+
         [HttpGet]
         [Route("api/list")]
-        public Dictionary<string, int> List()
+        public Dictionary<string, int> GetList()
         {
+            ComponentList compList = new ComponentList();
             return compList.GetComponentLists();
         }
 

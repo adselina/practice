@@ -5,6 +5,7 @@ import { Home } from './components/Home';
 import { Database } from './components/Database';
 import { AddStaff } from './components/AddStaff';
 import { AddEnterprise } from './components/AddEnterprise';
+import { AddManufacture } from './components/AddManufacture';
 
 import './custom.css'
 
@@ -22,6 +23,9 @@ export default class App extends Component {
 
                 <Route path='/addenterprise' component={AddEnterprise} />
                 <Route path='/enterprise/edit/:empid' component={AddEnterprise} />
+
+                <Route path='/addmanufacture' component={AddManufacture} />
+                <Route path='/manufacture/edit/:empid' component={AddManufacture} />
             </Layout>
         );
     }

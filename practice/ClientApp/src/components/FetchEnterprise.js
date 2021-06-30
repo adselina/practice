@@ -18,30 +18,48 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.EnterpriseData = exports.FetchEnterprise = void 0;
 var React = require("react");
 var react_router_dom_1 = require("react-router-dom");
+var SerchEnterprise_1 = require("./SerchEnterprise");
 var FetchEnterprise = /** @class */ (function (_super) {
     __extends(FetchEnterprise, _super);
     function FetchEnterprise(props) {
         var _this = _super.call(this, props) || this;
-        _this.state = { entList: [], loading: true };
-        fetch('api/enterprise')
-            .then(function (response) { return response.json(); })
-            .then(function (data) {
-            _this.setState({ entList: data, loading: false });
-        });
+        _this.state = { searchList: [], entList: [], loading: true };
+        if (_this.state.entList.length == 0) {
+            fetch('api/enterprise')
+                .then(function (response) { return response.json(); })
+                .then(function (data) {
+                _this.setState({ searchList: data, entList: data, loading: false });
+            });
+        }
         _this.handleDelete = _this.handleDelete.bind(_this);
+        _this.handleEdit = _this.handleEdit.bind(_this);
         return _this;
-        //this.handleEdit = this.handleEdit.bind(this);
     }
     FetchEnterprise.prototype.render = function () {
+        var _this = this;
         var contents = this.state.loading
             ? React.createElement("p", null,
                 React.createElement("em", null, "Loading..."))
-            : this.renderEnterpriseTable(this.state.entList);
-        return React.createElement("div", null,
+            : this.renderEnterpriseTable(this.state.searchList);
+        return (React.createElement("div", null,
             React.createElement("h1", null, "\u041F\u0440\u0435\u0434\u043F\u0440\u0438\u044F\u0442\u0438\u044F"),
-            React.createElement("p", null,
-                React.createElement(react_router_dom_1.Link, { to: "/addenterprise" }, "\u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C...")),
-            contents);
+            React.createElement("div", null,
+                React.createElement(react_router_dom_1.Link, { to: "/addenterprise" }, "\u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C..."),
+                React.createElement(SerchEnterprise_1.SerchEnterprise, { Search: function (type, value) { return _this.ChangeSerch(type, value); }, Remove: function () { return _this.RemoveSearch(); } })),
+            contents));
+    };
+    FetchEnterprise.prototype.ChangeSerch = function (type, value) {
+        var _this = this;
+        console.log(type, value);
+        this.setState({ loading: true });
+        fetch("api/enterprise/" + type + "-" + value)
+            .then(function (response) { return response.json(); })
+            .then(function (data) {
+            _this.setState({ searchList: data, loading: false });
+        });
+    };
+    FetchEnterprise.prototype.RemoveSearch = function () {
+        this.setState({ searchList: this.state.entList });
     };
     // Handle Delete request for an employee  
     FetchEnterprise.prototype.handleDelete = function (id) {
@@ -53,12 +71,15 @@ var FetchEnterprise = /** @class */ (function (_super) {
                 method: 'delete'
             }).then(function (data) {
                 _this.setState({
-                    entList: _this.state.entList.filter(function (rec) {
+                    searchList: _this.state.entList.filter(function (rec) {
                         return (rec.id != id);
                     })
                 });
             });
         }
+    };
+    FetchEnterprise.prototype.handleEdit = function (id) {
+        this.props.history.push("/enterprise/edit/" + id);
     };
     // Returns the HTML table to the render() method.  
     FetchEnterprise.prototype.renderEnterpriseTable = function (ent) {
@@ -85,7 +106,7 @@ var FetchEnterprise = /** @class */ (function (_super) {
                     React.createElement("td", null,
                         React.createElement(react_router_dom_1.Link, { to: "/enterprise/edit/" + e.id }, "\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C"),
                         React.createElement("div", { className: "action", onClick: function (id) { return _this.handleDelete(e.id); } },
-                            React.createElement(react_router_dom_1.Link, { to: "" }, " \u0423\u0434\u0430\u043B\u0438\u0442\u044C"))));
+                            React.createElement(react_router_dom_1.Link, { to: "/database?type=Предприятия" }, " \u0423\u0434\u0430\u043B\u0438\u0442\u044C"))));
             })));
     };
     return FetchEnterprise;

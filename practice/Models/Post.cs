@@ -21,7 +21,7 @@ namespace practice.Models
         postgresContext db = new postgresContext();
         public int Find(string postName)
         {
-            return db.Posts.Where(x => x.Postname == postName).Select(x => x.Id).First();
+            return db.Posts.Where(x => x.Postname == postName).Select(x => x.Id).FirstOrDefault();
         }
         public IEnumerable<Post> GetInfo()
         {

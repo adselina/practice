@@ -41,7 +41,6 @@ export class FetchStaff extends React.Component<RouteComponentProps<{}>, FetchSt
                 <Link to="/addstaff">Добавить...</Link>
                 {<SerchStaff Search={(type: string, value: string) => this.ChangeSerch(type, value)} Remove={()=>this.RemoveSearch()} />}
             </div>
-            
             {contents}
         </div>);
     }
@@ -67,10 +66,9 @@ export class FetchStaff extends React.Component<RouteComponentProps<{}>, FetchSt
             fetch('api/staff/' + id, {
                 method: 'delete'
             }).then(data => {
-
                 this.setState(
                     {
-                        stafflist: this.state.stafflist.filter((rec) => {
+                        searchList: this.state.stafflist.filter((rec) => {
                             return (rec.id != id);
                         }
                      )
@@ -110,7 +108,7 @@ export class FetchStaff extends React.Component<RouteComponentProps<{}>, FetchSt
                         <td>
                             <Link to={"/staff/edit/" + e.id}>Изменить</Link>
                             <a className="action" onClick={(id) => this.handleDelete(e.id)}>
-                                <Link to={""}> Удалить</Link>
+                                <Link to={"/database?type=Сотрудники"}> Удалить</Link>
                             </a>
                         </td>
                     </tr>
